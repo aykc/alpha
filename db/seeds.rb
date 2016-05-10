@@ -5,3 +5,10 @@
 #
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
+
+cat = Category.create name: "pens"
+opt = Option.create name: "color"
+val = Value.create value: "red"
+opt_grp = cat.option_groups.create name: "general info"
+opt_grp.properties.create option: opt, value: val
+cat.items.create name: "Parker"

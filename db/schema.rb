@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160505133251) do
+ActiveRecord::Schema.define(version: 20160508135633) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -22,6 +22,32 @@ ActiveRecord::Schema.define(version: 20160505133251) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "items", force: :cascade do |t|
+    t.string   "name"
+    t.integer  "category_id"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+  end
+
+  add_index "items", ["category_id"], name: "index_items_on_category_id", using: :btree
+
+  create_table "items_properties", force: :cascade do |t|
+    t.integer "item_id"
+    t.integer "property_id"
+  end
+
+  add_index "items_properties", ["item_id"], name: "index_items_properties_on_item_id", using: :btree
+  add_index "items_properties", ["property_id"], name: "index_items_properties_on_property_id", using: :btree
+
+  create_table "option_groups", force: :cascade do |t|
+    t.string   "name"
+    t.integer  "category_id"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+  end
+
+  add_index "option_groups", ["category_id"], name: "index_option_groups_on_category_id", using: :btree
+
   create_table "options", force: :cascade do |t|
     t.string   "name"
     t.datetime "created_at", null: false
@@ -29,14 +55,14 @@ ActiveRecord::Schema.define(version: 20160505133251) do
   end
 
   create_table "properties", force: :cascade do |t|
-    t.integer  "category_id"
+    t.integer  "option_group_id"
     t.integer  "option_id"
     t.integer  "value_id"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
   end
 
-  add_index "properties", ["category_id"], name: "index_properties_on_category_id", using: :btree
+  add_index "properties", ["option_group_id"], name: "index_properties_on_option_group_id", using: :btree
   add_index "properties", ["option_id"], name: "index_properties_on_option_id", using: :btree
   add_index "properties", ["value_id"], name: "index_properties_on_value_id", using: :btree
 
@@ -46,7 +72,11 @@ ActiveRecord::Schema.define(version: 20160505133251) do
     t.datetime "updated_at", null: false
   end
 
+  add_foreign_key "items", "categories"
+  add_foreign_key "items_properties", "items"
+  add_foreign_key "items_properties", "properties"
+  add_foreign_key "option_groups", "categories"
   add_foreign_key "properties", "\"values\"", column: "value_id"
-  add_foreign_key "properties", "categories"
+  add_foreign_key "properties", "option_groups"
   add_foreign_key "properties", "options"
 end
